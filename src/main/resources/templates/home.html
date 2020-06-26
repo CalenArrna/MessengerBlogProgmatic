@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <link href="/webjars/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/webjars/jquery/3.0.0/jquery.min.js"></script>
+    <script src="/webjars/popper.js/1.14.3/popper.min.js"></script>
+    <script src="/webjars/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="" tabindex="-1" aria-disabled="true">Főoldal</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" data-th-href="@{/messages}">Üzenetek<span
+                            class="sr-only">(Főoldal)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" data-th-href="@{/newMessage}">Új üzenet</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav justify-content-end">
+                <li class="nav-item">
+                    <a class="nav-link active" data-th-href="@{/login}">Bejelentkezés</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" data-th-href="@{/logout}">Kijelentkezés</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <h1>Üdv, az üzenetküldő oldalunkon!</h1>
+
+    <h5> A legutolsó üzenet az oldalon: </h5>
+    <div class="card text-center">
+        <div class="card-header" data-th-text="${message.from}"></div>
+        <div class="card-body">
+            <p class="card-text" data-th-text="${message.text}"></p>
+            <a href="" class="btn btn-primary">Válasz</a>
+        </div>
+        <div class="card-footer text-muted" data-th-text="${{message.time}}"></div>
+    </div>
+    <h5> A felhasználó statisztikái: </h5>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="/webjars/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/webjars/jquery/3.0.0/jquery.min.js"></script>
+    <script src="/webjars/popper.js/1.14.3/popper.min.js"></script>
+    <script src="/webjars/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <title>Messages</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link active" data-th-href="@{/greeting}" tabindex="-1">Főoldal<span class="sr-only">(Üzenetek)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="" aria-disabled="true">Üzenetek</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" data-th-href="@{/newMessage}">Új üzenet</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" data-th-href="@{/login}">Bejelentkezés</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <form data-th-action="@{/messages}" method="get">
+        <div class="form-group row">
+            <label for="limit" class="col-sm-2 col-form-label">Üzenetek száma: </label>
+            <div class="col-sm-10">
+                <input type="text" name="limit" class="form-control" id="limit">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="orderBy">Rendezési mező kiválasztása: </label>
+            <select class="form-control" name="orderBy" id="orderBy">
+                <option value="time">Beérkezés ideje</option>
+                <option value="from">Küldő</option>
+                <option value="id">Azonosító</option>
+            </select>
+        </div>
+        <fieldset class="form-group">
+            <div class="row">
+                <legend class="col-form-label col-sm-2 pt-0">Elemek sorrendje:</legend>
+                <div class="col-sm-10">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="ordering" id="ASC" value="ASC" checked>
+                        <label class="form-check-label" for="ASC">
+                            Növekvő sorrend
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="ordering" id="DSC" value="DSC">
+                        <label class="form-check-label" for="DSC">
+                            Csökkenő sorrend
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <div class="form-group row">
+            <div class="col-sm-10">
+                <button type="submit" class="btn btn-primary">Jóváhagyás</button>
+            </div>
+        </div>
+    </form>
+
+
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Feladó</th>
+            <th scope="col">Időpont</th>
+            <th scope="col">Üzenet</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr data-th-each="message: ${messages}">
+            <th scope="row" data-th-text="${message.id}"></th>
+            <td data-th-text="${message.from}"></td>
+            <td data-th-text="${{message.time}}"></td>
+            <td data-th-text="${message.text}"></td>
+            <td><a data-th-href="@{/messageDetails/{id}(id=${message.id})}" class="btn btn-primary">Részletek</a></td>
+            <td>
+                <a data-th-href="@{/delete/{id}(id=${message.id})}" data-sec-authorize="hasRole('ADMIN')" class="btn btn-primary">
+                    Törlés
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

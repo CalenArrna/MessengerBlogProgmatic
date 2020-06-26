@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <link href="/webjars/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/webjars/jquery/3.0.0/jquery.min.js"></script>
+    <script src="/webjars/popper.js/1.14.3/popper.min.js"></script>
+    <script src="/webjars/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <title>Account_Registration</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link active" data-th-href="@{/greeting}" tabindex="-1">Főoldal<span class="sr-only">(Üzenetek)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="" aria-disabled="true">Üzenetek</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" data-th-href="@{/newMessage}">Új üzenet</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" data-th-href="@{/login}">Bejelentkezés</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <h1>Új felhasználó regisztrálása:</h1>
+    <form method="post" data-th-action="@{/register}" data-th-object="${newUser}">
+        <div class="form-group">
+            <label for="userName">Felhasználónév</label>
+            <label class="text-danger" data-th-errors="*{username}" data-th-if="${#fields.hasErrors('username')}" for="userName"></label>
+            <input type="text" class="form-control" data-th-field="*{username}" name="username" id="userName" placeholder="Ide kerül a felhasználónév!">
+        </div>
+        <div class="form-group">
+            <label for="userPassword">Jelszó</label>
+            <label class="text-danger" data-th-if="${#fields.hasErrors('password')}" data-th-errors="*{password}" for="userPassword"></label>
+            <input type="password" name="password" class="form-control" id="userPassword">
+        </div>
+        <div class="form-group">
+            <label for="userPasswordConfirm">Jelszó megerősítése</label>
+            <label class="text-danger" data-th-if="${#fields.hasErrors('passConf')}" data-th-errors="*{passConf}" for="userPasswordConfirm"></label>
+            <input type="password" name="passConf" class="form-control" id="userPasswordConfirm">
+        </div>
+        <button type="submit" class="btn btn-primary">Regisztráció elküldése</button>
+    </form>
+</div>
+</body>
+</html>
