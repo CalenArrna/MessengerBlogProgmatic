@@ -43,8 +43,34 @@ public class MessageService {
     }
 
     @Transactional
-    public List<Message> getMessageListBy(Integer limit, String orderBy, Ordering ordering) {
-        return em.createQuery("SELECT m FROM Message m", Message.class).getResultList();
+    public List<Message> getMessageListBy(Integer topicID, Integer limit, String orderBy, String ordering) {
+        String ord = null;
+        String asc = "ASC";
+        if (orderBy == null) orderBy = "id";
+        if (ordering == null) ordering = "ASC";
+        switch (orderBy) {
+            case "from":
+                orderBy = "m.from";
+                break;
+            case "time":
+                orderBy = "m.time";
+                break;
+            default:
+                orderBy = "m.id";
+        }
+        if (ordering.equals("DSC")) ordering = "DESC";
+        if (limit <= 0) {
+            return em.createQuery("SELECT m FROM Message m WHERE m.topic.topicID = :tId ORDER BY "+orderBy + " " + ordering, Message.class)
+                    .setParameter("tId",topicID)
+                    .getResultList();
+        }else {
+            return em.createQuery("SELECT m FROM Message m WHERE m.topic.topicID = :tId ORDER BY "+orderBy + " " + ordering, Message.class)
+                    .setParameter("tId",topicID)
+                    .setMaxResults(limit)
+                    .getResultList();
+        }
+
+
         /*List<Message> list;
         if (limit == -1) limit = messages.size();
         if (ordering == null) ordering = Ordering.ASC;
@@ -81,9 +107,6 @@ public class MessageService {
 
     @Transactional
     public void createMessage(Message message) {
-       // message.getTopic().setMessages(new ArrayList<>());
-       // message.getTopic().getMessages().add(message);
-      //  em.persist(message.getTopic());
         em.persist(message);
     }
 
@@ -99,13 +122,14 @@ public class MessageService {
 
     @Transactional
     public List<Topic> getTopicList() {
-        return em.createQuery("SELECT t from Topic t",Topic.class).getResultList();
+        return em.createQuery("SELECT t from Topic t", Topic.class).getResultList();
     }
 
     @Transactional
     public Topic getTopicBy(int ID) {
-        return em.find(Topic.class,ID);
+        return em.find(Topic.class, ID);
     }
+
     @Transactional
     public Message getLastMessage() {
         return em.createQuery("select m from Message m", Message.class).getResultStream()

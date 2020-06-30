@@ -26,7 +26,7 @@ class WebSecConfig extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("/greeting")
                 .and()
                 .authorizeRequests()
-                .antMatchers("/greeting","/messages","/webjars/**","/login", "/register","/messageDetails/**", "/img/**").permitAll()
+                .antMatchers("/home","/messages","/webjars/**","/login", "/register","/messageDetails/**", "/img/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .logout()

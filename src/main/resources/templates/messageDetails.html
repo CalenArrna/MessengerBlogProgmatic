@@ -18,17 +18,23 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link active" data-th-href="@{/greeting}" tabindex="-1">Főoldal<span class="sr-only">(Üzenet részletei)</span></a>
+                <li class="nav-item">
+                    <a class="nav-link active" data-th-href="@{/home}" tabindex="-1">Főoldal</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" data-th-href="@{/messages}">Üzenetek</a>
+                    <a class="nav-link active" data-th-href="@{/messages}">Üzenetek<span
+                            class="sr-only">(Főoldal)</span></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" data-th-href="@{/newMessage}">Új üzenet</a>
                 </li>
+            </ul>
+            <ul class="navbar-nav justify-content-end">
                 <li class="nav-item">
                     <a class="nav-link active" data-th-href="@{/login}">Bejelentkezés</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" data-th-href="@{/logout}">Kijelentkezés</a>
                 </li>
             </ul>
         </div>

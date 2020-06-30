@@ -1,6 +1,8 @@
 package edu.progmatic.messenger.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Entity
@@ -11,9 +13,13 @@ public class Topic {
     private int topicID;
 
     @Column
+    @NotNull
+    @Size(min = 2, max = 30)
     private String title;
 
     @Column
+    @NotNull
+    @Size(min = 4, max = 300)
     private String description;
 
     @OneToMany(mappedBy = "topic")

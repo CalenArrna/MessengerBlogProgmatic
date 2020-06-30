@@ -19,7 +19,7 @@ public class HomeController {
         this.messageService = messageService;
     }
 
-    @RequestMapping(value = "/greeting", method = RequestMethod.GET)
+    @RequestMapping(value = "/home", method = RequestMethod.GET)
     public String homePage(Model model){
         Message lastMessage = messageService.getLastMessage();
         model.addAttribute("message",lastMessage);

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:topic="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <link href="/webjars/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
     <script src="/webjars/jquery/3.0.0/jquery.min.js"></script>
     <script src="/webjars/popper.js/1.14.3/popper.min.js"></script>
     <script src="/webjars/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-    <title>newMessage</title>
+    <title>createNewTopic</title>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -25,7 +25,7 @@
                             class="sr-only">(Főoldal)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link disabled" data-th-href="@{/newMessage}">Új üzenet</a>
+                    <a class="nav-link active" data-th-href="@{/newMessage}">Új üzenet</a>
                 </li>
             </ul>
             <ul class="navbar-nav justify-content-end">
@@ -41,27 +41,19 @@
 </nav>
 
 <div class="container">
-    <form method="post" data-th-action="@{/newMessage}" data-th-object="${message}">
+    <h1>Új téma létrehozása</h1>
+    <form method="post" data-th-action="@{/createTopic}" data-th-object="${topic}">
         <div class="form-group">
-            <label for="from">Feladó: </label>
-            <label class="text-danger" data-th-if="${#fields.hasErrors('from')}" data-th-errors="*{from}" for="from" ></label>
-            <input type="text" data-th-field="*{from}" class="form-control" id="from" placeholder="Ide írd be a küldő nevét!">
+            <label for="title">Téma címe:</label>
+            <label class="text-danger" data-th-errors="*{title}" data-th-if="${#fields.hasErrors('title')}" for="title"></label>
+            <input type="text" class="form-control" data-th-field="*{title}" name="title" id="title" placeholder="Ide kerül a cím!">
         </div>
         <div class="form-group">
-            <label for="topicSelector">Téma</label>
-            <select class="form-control" id="topicSelector" data-th-field="*{topic.topicID}">
-                <option data-th-each="topic: ${topics}" data-th-text="${topic.title}" data-th-value="${topic.topicID}">1</option>
-            </select>
-            <a data-th-href="@{/createTopic}">Új téma létrehozása</a>
+            <label for="description">Téma leírása:</label>
+            <label class="text-danger" data-th-if="${#fields.hasErrors('description')}" data-th-errors="*{description}" for="description"></label>
+            <textarea class="form-control" data-th-field="*{description}" placeholder="Ide kerül a leírás!" id="description" rows="4"></textarea>
         </div>
-        <div class="form-group">
-            <label for="text">Üzenet szövege: </label>
-            <label class="text-danger" data-th-if="${#fields.hasErrors('text')}" data-th-errors="*{text}" for="text" ></label>
-            <textarea class="form-control" data-th-field="*{text}" placeholder="Ide kerül az üzenet szövege!" id="text" rows="3"></textarea>
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-primary mb-2">Elküldés</button>
-        </div>
+        <button type="submit" class="btn btn-primary">Téma létrehozása</button>
     </form>
 </div>
 </body>

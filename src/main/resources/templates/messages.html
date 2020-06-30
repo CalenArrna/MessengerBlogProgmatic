@@ -17,17 +17,23 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link active" data-th-href="@{/greeting}" tabindex="-1">Főoldal<span class="sr-only">(Üzenetek)</span></a>
+                <li class="nav-item">
+                    <a class="nav-link active" data-th-href="@{/home}" tabindex="-1">Főoldal</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link disabled" href="" aria-disabled="true">Üzenetek</a>
+                    <a class="nav-link disabled" data-th-href="@{/messages}">Üzenetek<span
+                            class="sr-only">(Főoldal)</span></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" data-th-href="@{/newMessage}">Új üzenet</a>
                 </li>
+            </ul>
+            <ul class="navbar-nav justify-content-end">
                 <li class="nav-item">
                     <a class="nav-link active" data-th-href="@{/login}">Bejelentkezés</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" data-th-href="@{/logout}">Kijelentkezés</a>
                 </li>
             </ul>
         </div>
@@ -36,6 +42,12 @@
 
 <div class="container">
     <form data-th-action="@{/messages}" method="get">
+        <div class="form-group">
+            <label for="topicSelector">Téma választó</label>
+            <select class="form-control" id="topicSelector" name="topic">
+                <option data-th-each="topic: ${topics}" data-th-text="${topic.title}" data-th-value="${topic.topicID}"></option>
+            </select>
+        </div>
         <div class="form-group row">
             <label for="limit" class="col-sm-2 col-form-label">Üzenetek száma: </label>
             <div class="col-sm-10">
