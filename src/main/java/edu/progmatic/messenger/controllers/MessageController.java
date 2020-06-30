@@ -2,25 +2,19 @@ package edu.progmatic.messenger.controllers;
 
 import edu.progmatic.messenger.enums.Ordering;
 import edu.progmatic.messenger.model.Message;
+import edu.progmatic.messenger.model.Topic;
 import edu.progmatic.messenger.services.EntityNotFoundException;
 import edu.progmatic.messenger.services.MessageService;
 import edu.progmatic.messenger.session.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.WebApplicationContext;
-
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import java.util.List;
 
 @Controller
@@ -54,10 +48,12 @@ public class MessageController {
 
 
     @RequestMapping(value = "/newMessage", method = RequestMethod.GET)
-    public String showNewMessage(Message message) {
+    public String showNewMessage(Message message, Model model) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        model.addAttribute("topics", messageService.getTopicList());
         userInfo.setName(user.getUsername());
         message.setFrom(userInfo.getName());
+        message.setTopic(new Topic());
         return "newMessage";
     }
 
@@ -67,8 +63,9 @@ public class MessageController {
         if (bindingResult.hasErrors()) {
             return "/newMessage";
         } else {
+            message.setTopic(messageService.getTopicBy(message.getTopic().getTopicID()));
             userInfo.setName(message.getFrom());
-            messageService.addMessage(message);
+            messageService.createMessage(message);
             return "redirect:/messages";
         }
     }

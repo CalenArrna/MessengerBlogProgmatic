@@ -1,6 +1,7 @@
 package edu.progmatic.messenger.controllers;
 
 import edu.progmatic.messenger.model.Message;
+import edu.progmatic.messenger.model.Topic;
 import edu.progmatic.messenger.services.MessageService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +34,7 @@ class HomeControllerTest {
     @Test
     @WithUserDetails("user")
     void homePage() throws Exception {
-        Message msg = new Message("Béla", LocalDateTime.now(), "Én vagyok az utolsó");
+        Message msg = new Message("Béla", LocalDateTime.now(), "Én vagyok az utolsó",new Topic("Első topic", "Ez az első topic", new ArrayList<>()));
         Mockito.when(messageService.getLastMessage()).thenReturn(msg);
         mockMvc.perform(MockMvcRequestBuilders.get("/greeting"))
                 .andExpect(MockMvcResultMatchers.view().name("home"))

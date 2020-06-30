@@ -4,6 +4,7 @@ import edu.progmatic.messenger.model.Message;
 import edu.progmatic.messenger.services.EntityNotFoundException;
 import edu.progmatic.messenger.services.MessageService;
 import edu.progmatic.messenger.session.UserInfo;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -22,6 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+
+/*
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = MessageController.class)
@@ -78,4 +82,4 @@ class MessageControllerTest {
     @Test
     void deleteAMessage() {
     }
-}
+}*/

@@ -84,6 +84,7 @@
             <th scope="col">Feladó</th>
             <th scope="col">Időpont</th>
             <th scope="col">Üzenet</th>
+            <th scope="col">Téma</th>
             <th scope="col"></th>
             <th scope="col"></th>
         </tr>
@@ -94,6 +95,7 @@
             <td data-th-text="${message.from}"></td>
             <td data-th-text="${{message.time}}"></td>
             <td data-th-text="${message.text}"></td>
+            <td data-th-text="${message.topic.title}"></td>
             <td><a data-th-href="@{/messageDetails/{id}(id=${message.id})}" class="btn btn-primary">Részletek</a></td>
             <td>
                 <a data-th-href="@{/delete/{id}(id=${message.id})}" data-sec-authorize="hasRole('ADMIN')" class="btn btn-primary">
