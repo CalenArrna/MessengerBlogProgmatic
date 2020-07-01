@@ -4,6 +4,8 @@ import edu.progmatic.messenger.enums.Ordering;
 import edu.progmatic.messenger.model.Message;
 import edu.progmatic.messenger.model.Topic;
 import org.hibernate.query.criteria.internal.expression.function.AggregationFunction;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,24 +29,18 @@ public class MessageService {
     EntityManager em;
 
 
-
-/*    {
-        em.persist(new Message("Lacika", LocalDateTime.of(2020, 6, 16, 10, 45, 22), "Szave Tesa! Mikor megyünk végre el a klubba?"));
-        em.persist(new Message("Lilla", LocalDateTime.of(2020, 6, 16, 11, 12, 1), "Szia Szivi! Voltál vásárolni? Van otthon kenyér? Ha nem, szólj és hozok!"));
-        em.persist(new Message("Lacika", LocalDateTime.of(2020, 6, 16, 13, 0, 58), "Na, mi van már, mé nem írsz?"));
-        em.persist(new Message("Sári", LocalDateTime.of(2020, 6, 15, 13, 33, 51), "Béla keresett, hívd vissza!"));
-        em.persist(new Message("Béla", LocalDateTime.of(2020, 6, 16, 6, 2, 8), "Helló Gergő! Tudsz nekem kölcsön adni?"));
-//        for (Message message : messages) {
-//            message.setId(actualMessageID++);
-//        }
-    }*/
-
     public List<Message> getMessages() {
         return messages;
     }
 
     @Transactional
     public List<Message> getMessageListBy(Integer topicID, Integer limit, String orderBy, String ordering) {
+        boolean isAdmin = false;
+        Optional<?> grantedAuthority = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().findFirst();
+        if (grantedAuthority.isPresent()) {
+            isAdmin = grantedAuthority.get().toString().contains("ROLE_ADMIN");
+        }
+
         String ord = null;
         String asc = "ASC";
         if (orderBy == null) orderBy = "id";
@@ -59,13 +56,15 @@ public class MessageService {
                 orderBy = "m.id";
         }
         if (ordering.equals("DSC")) ordering = "DESC";
-        if (limit <= 0) {
-            return em.createQuery("SELECT m FROM Message m WHERE m.topic.topicID = :tId ORDER BY "+orderBy + " " + ordering, Message.class)
-                    .setParameter("tId",topicID)
+        if (limit <= 0) limit = 15;
+        if (isAdmin) {
+            return em.createQuery("SELECT m FROM Message m WHERE m.topic.topicID = :tId ORDER BY " + orderBy + " " + ordering, Message.class)
+                    .setParameter("tId", topicID)
+                    .setMaxResults(limit)
                     .getResultList();
-        }else {
-            return em.createQuery("SELECT m FROM Message m WHERE m.topic.topicID = :tId ORDER BY "+orderBy + " " + ordering, Message.class)
-                    .setParameter("tId",topicID)
+        } else {
+            return em.createQuery("SELECT m FROM Message m WHERE m.topic.topicID = :tId AND m.deleted = false ORDER BY " + orderBy + " " + ordering, Message.class)
+                    .setParameter("tId", topicID)
                     .setMaxResults(limit)
                     .getResultList();
         }
@@ -132,18 +131,14 @@ public class MessageService {
 
     @Transactional
     public Message getLastMessage() {
-        return em.createQuery("select m from Message m", Message.class).getResultStream()
-                .max(Comparator.comparing(Message::getTime))
-                .get();
+        return em.createQuery("select m from Message m WHERE m.deleted = false order by m.time desc ", Message.class)
+                .setMaxResults(1)
+                .getSingleResult();
     }
 
-
+    @Transactional
     public void deleteMessageOf(int id) {
-        try {
-            getMessageOf(id).setDeleted(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+        em.find(Message.class, id).setDeleted(true);
 
+    }
 }

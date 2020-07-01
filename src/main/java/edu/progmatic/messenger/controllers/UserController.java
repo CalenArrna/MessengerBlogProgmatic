@@ -44,15 +44,7 @@ public class UserController {
     public String showRegister(@ModelAttribute("newUser") RegDTOSimple newUser) {
         return "register";
     }
-
-//    @PostMapping(path = "/login")
-//    public String loginUser(@Valid @ModelAttribute("user") RegDTOSimple user, BindingResult bindingResult) {
-//        if (bindingResult.hasErrors()) {
-//            return "/login";
-//        } else {
-//            return "redirect:/greeting";
-//        }
-//    }
+    
 
     @PostMapping(path = "/register")
     public String registerUser(@Valid @ModelAttribute("newUser") RegDTOSimple newUser, BindingResult bindingResult) {

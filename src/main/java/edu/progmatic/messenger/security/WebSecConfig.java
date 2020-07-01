@@ -22,8 +22,7 @@ class WebSecConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http    .formLogin()
                 .loginPage("/login").permitAll()
-                .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/greeting")
+                .defaultSuccessUrl("/home")
                 .and()
                 .authorizeRequests()
                 .antMatchers("/home","/messages","/webjars/**","/login", "/register","/messageDetails/**", "/img/**").permitAll()

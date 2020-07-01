@@ -111,8 +111,11 @@
             <td data-th-text="${message.topic.title}"></td>
             <td><a data-th-href="@{/messageDetails/{id}(id=${message.id})}" class="btn btn-primary">Részletek</a></td>
             <td>
-                <a data-th-href="@{/delete/{id}(id=${message.id})}" data-sec-authorize="hasRole('ADMIN')" class="btn btn-primary">
+                <a data-th-href="@{/delete/{id}(id=${message.id})}" data-th-if="${message.deleted == false}" data-sec-authorize="hasRole('ADMIN')" class="btn btn-primary">
                     Törlés
+                </a>
+                <a href="#" data-th-unless="${message.deleted == false}" data-sec-authorize="hasRole('ADMIN')" class="btn btn-primary disabled">
+                    Törölve
                 </a>
             </td>
         </tr>
