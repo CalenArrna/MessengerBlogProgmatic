@@ -1,25 +1,24 @@
 package edu.progmatic.messenger.services;
 
-import org.springframework.security.core.userdetails.User;
+
+import edu.progmatic.messenger.model.AppUser;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Set;
+
 
 @Service
 public class UserService {
-    private Map<String, User> userMap;
+    @PersistenceContext
+    EntityManager em;
 
-    public Map<String, User> getUserMap() {
-        return userMap;
+    public void createUser (AppUser newUser){
+        em.persist(newUser);
     }
 
-    public void setUserMap(User user) {
-        if (userMap.containsKey(user.getUsername())) {
-
-        }else {
-            userMap.put(user.getUsername(),user);
-        }
-    }
+//    public Set<String> getUsernames () {
+//        em.q
+//    }
 }

@@ -48,7 +48,12 @@
             <select class="form-control" id="topicSelector" name="topic">
                 <option data-th-each="topic: ${topics}" data-th-text="${topic.title}" data-th-value="${topic.topicID}"></option>
             </select>
-        </div>
+            <!-- Button trigger modal -->
+            <a  class="btn btn-primary" data-sec-authorize="hasRole('ADMIN')" data-th-href="@{/deleteTopic}">
+                Témák törlése
+            </a>
+
+
         <div class="form-group row">
             <label for="limit" class="col-sm-2 col-form-label">Üzenetek száma: </label>
             <div class="col-sm-10">

@@ -34,13 +34,13 @@ public class MessageService {
     }
 
     @Transactional
-    public List<Message> getMessageListBy(Integer topicID, Integer limit, String orderBy, String ordering) {
+    public List<Message> getMessageListBy(Integer topicID, Integer limit, String orderBy, String ordering, List<Topic> topics) {
         boolean isAdmin = false;
         Optional<?> grantedAuthority = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().findFirst();
         if (grantedAuthority.isPresent()) {
             isAdmin = grantedAuthority.get().toString().contains("ROLE_ADMIN");
         }
-
+        if (topicID == null) topicID = topics.get(0).getTopicID();
         String ord = null;
         String asc = "ASC";
         if (orderBy == null) orderBy = "id";
@@ -112,6 +112,12 @@ public class MessageService {
     @Transactional
     public void createTopic(Topic topic) {
         em.persist(topic);
+    }
+
+    @Transactional
+    public void deleteTopicWithItsMessages (int id) {
+        Topic topicToRemove = em.find(Topic.class, id);
+        em.remove(topicToRemove);
     }
 
     @Transactional

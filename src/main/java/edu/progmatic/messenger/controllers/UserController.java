@@ -1,5 +1,6 @@
 package edu.progmatic.messenger.controllers;
 
+import edu.progmatic.messenger.model.AppUser;
 import edu.progmatic.messenger.model.Message;
 import edu.progmatic.messenger.model.RegDTOSimple;
 import edu.progmatic.messenger.model.UserData;
@@ -21,12 +22,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
+import java.util.HashSet;
 
 @Controller
 public class UserController {
     private UserInfo userInfo;
     private UserService service;
     private UserDetailsManager manager;
+    private HashSet<String> usernameList;
 
     @Autowired
     public UserController(UserInfo userInfo, UserService service, UserDetailsService userDetailsService) {
@@ -52,12 +55,16 @@ public class UserController {
             bindingResult.addError(new FieldError("newUser","password","A jelszavak nem egyeznek!"));
             bindingResult.addError(new FieldError("newUser","passConf","A jelszavak nem egyeznek!"));
         }
-        if(manager.userExists(newUser.getUsername()))
+//        if(manager.userExists(newUser.getUsername()))
+//            bindingResult.addError(new FieldError("newUser","username","Van már ilyen felhasználó!"));
+        if(usernameList.contains(newUser.getUsername()))
             bindingResult.addError(new FieldError("newUser","username","Van már ilyen felhasználó!"));
         if (bindingResult.hasErrors()) {
             return "register";
         } else {
-            manager.createUser(User.withUsername(newUser.getUsername()).password(newUser.getPassword()).roles("USER").build());
+            AppUser appUser = new AppUser(newUser.getUsername(),newUser.getPassword());
+            service.createUser(appUser);
+            //manager.createUser(User.withUsername(newUser.getUsername()).password(newUser.getPassword()).roles("USER").build());
             return "redirect:/login";
         }
     }

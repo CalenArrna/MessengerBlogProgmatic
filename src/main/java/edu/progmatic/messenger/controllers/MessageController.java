@@ -5,7 +5,6 @@ import edu.progmatic.messenger.model.Topic;
 import edu.progmatic.messenger.services.EntityNotFoundException;
 import edu.progmatic.messenger.services.MessageService;
 import edu.progmatic.messenger.session.UserInfo;
-import org.hibernate.annotations.common.reflection.XMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,12 +32,12 @@ public class MessageController {
 
 
     @RequestMapping(value = "/messages", method = RequestMethod.GET)
-    public String messages(@RequestParam(name = "topic", required = false, defaultValue = "1") Integer topic,
+    public String messages(@RequestParam(name = "topic", required = false) Integer topic,
                            @RequestParam(name = "limit", required = false, defaultValue = "0") Integer limit,
                            @RequestParam(name = "orderBy", required = false) String orderBy,
                            @RequestParam(name = "ordering", required = false) String ordering,
                            Model model) {
-        List<Message> list = messageService.getMessageListBy(topic,limit, orderBy, ordering);
+        List<Message> list = messageService.getMessageListBy(topic,limit, orderBy, ordering, topicList);
         model.addAttribute("messages", list);
         model.addAttribute("topics", topicList);
         return "messages";
@@ -73,6 +72,21 @@ public class MessageController {
             messageService.createMessage(message);
             return "redirect:/messages";
         }
+    }
+
+    @GetMapping (value = "/deleteTopic")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String showDeleteTopic (Model model) {
+        model.addAttribute("topics",topicList);
+        return "deleteTopic";
+    }
+
+    @PostMapping (value = "/deleteTopic")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String deleteTopic (@RequestParam(name = "topic", required = true) int topicID) {
+        messageService.deleteTopicWithItsMessages(topicID);
+        refreshTopicList();
+        return "redirect:/messages";
     }
 
     @GetMapping(value = "/createTopic")
