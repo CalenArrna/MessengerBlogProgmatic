@@ -22,7 +22,7 @@ public class Topic {
     @Size(min = 4, max = 300)
     private String description;
 
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "topic")
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "topic", fetch = FetchType.LAZY)
     private List<Message> messages;
 
     public Topic() {

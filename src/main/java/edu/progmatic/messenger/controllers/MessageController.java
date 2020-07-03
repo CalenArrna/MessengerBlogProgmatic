@@ -13,9 +13,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.List;
+
+//TODO: Ask about username positioning!?
+//TODO: Why my querry doesn't work after deleted 'Alap' topic... default listing, where?
 
 @Controller
 public class MessageController {
@@ -29,7 +31,6 @@ public class MessageController {
         this.userInfo = userInfo;
         topicList = messageService.getTopicList();
     }
-
 
     @RequestMapping(value = "/messages", method = RequestMethod.GET)
     public String messages(@RequestParam(name = "topic", required = false) Integer topic,

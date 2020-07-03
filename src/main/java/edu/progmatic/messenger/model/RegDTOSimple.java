@@ -1,7 +1,6 @@
 package edu.progmatic.messenger.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 

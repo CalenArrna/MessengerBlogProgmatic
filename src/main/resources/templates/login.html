@@ -45,12 +45,14 @@
     <h1>Bejelentkezés:</h1>
     <form method="post" data-th-action="@{/login}">
         <div class="form-group">
-            <label for="userName">Felhasználónév</label>
-            <input type="text" class="form-control" name="username" id="userName" placeholder="Ide kerül a felhasználónév!">
+            <label for="username">Felhasználónév</label>
+<!--            <label class="text-danger" data-th-errors="*{username}" data-th-if="${#fields.hasErrors('username')}" for="userName"></label>-->
+            <input type="text" class="form-control" name="username" id="username" placeholder="Ide kerül a felhasználónév!">
         </div>
         <div class="form-group">
-            <label for="userPassword">Jelszó</label>
-            <input type="password" name="password" class="form-control" id="userPassword">
+            <label for="password">Jelszó</label>
+<!--            <label class="text-danger" data-th-if="${#fields.hasErrors('password')}" data-th-errors="*{password}" for="password"></label>-->
+            <input type="password" name="password" class="form-control" id="password">
         </div>
         <div class="alert alert-danger" data-th-if="${param.error}">
             Hibás login!
