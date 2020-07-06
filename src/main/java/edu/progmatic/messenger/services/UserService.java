@@ -10,8 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-
-
 @Service
 public class UserService implements UserDetailsService {
     private AppUser user;

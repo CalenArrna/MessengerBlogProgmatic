@@ -14,6 +14,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 //TODO: Ask about username positioning!?
@@ -22,13 +28,11 @@ import java.util.List;
 @Controller
 public class MessageController {
     private MessageService messageService;
-    private UserInfo userInfo;
     private List<Topic> topicList;
 
     @Autowired
     public MessageController(MessageService messageService, UserInfo userInfo) {
         this.messageService = messageService;
-        this.userInfo = userInfo;
         topicList = messageService.getTopicList();
     }
 
@@ -37,8 +41,19 @@ public class MessageController {
                            @RequestParam(name = "limit", required = false, defaultValue = "0") Integer limit,
                            @RequestParam(name = "orderBy", required = false) String orderBy,
                            @RequestParam(name = "ordering", required = false) String ordering,
-                           Model model) {
-        List<Message> list = messageService.getMessageListBy(topic,limit, orderBy, ordering, topicList);
+                           @RequestParam(name = "text", required = false) String text,
+                           @RequestParam(name = "sender", required = false) String sender,
+                           @RequestParam(name = "date", required = false) String stringDate,
+                           Model model) throws ParseException {
+
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm");
+        Date date = formatter.parse(stringDate);
+        LocalDateTime localDate = date
+                .toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+
+        List<Message> list = messageService.getMessageListBy(topic,limit, orderBy, ordering,sender,text,localDate,topicList);
         model.addAttribute("messages", list);
         model.addAttribute("topics", topicList);
         return "messages";
@@ -54,10 +69,10 @@ public class MessageController {
 
     @RequestMapping(value = "/newMessage", method = RequestMethod.GET)
     public String showNewMessage(Message message, Model model) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+     //   User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("topics", topicList);
-        userInfo.setName(user.getUsername());
-        message.setFrom(userInfo.getName());
+//        userInfo.setName(user.getUsername());
+     //   message.setFrom(user.getUsername()); //TODO get username from spring
         message.setTopic(new Topic());
         return "newMessage";
     }
@@ -69,7 +84,6 @@ public class MessageController {
             return "newMessage";
         } else {
             message.setTopic(messageService.getTopicBy(message.getTopic().getTopicID()));
-            userInfo.setName(message.getFrom());
             messageService.createMessage(message);
             return "redirect:/messages";
         }

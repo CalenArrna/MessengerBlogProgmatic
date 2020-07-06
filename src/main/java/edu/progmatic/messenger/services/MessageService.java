@@ -1,61 +1,94 @@
 package edu.progmatic.messenger.services;
-
-import edu.progmatic.messenger.enums.Ordering;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import edu.progmatic.messenger.model.Message;
+import edu.progmatic.messenger.model.QMessage;
 import edu.progmatic.messenger.model.Topic;
-import org.hibernate.query.criteria.internal.expression.function.AggregationFunction;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class MessageService {
     private List<Message> messages = new ArrayList<>();
-    private int actualMessageID = 0;
+    private JPAQueryFactory queryFactory;
 
     @PersistenceContext
     EntityManager em;
 
+    @Autowired
+    public MessageService() {
+        this.queryFactory = new JPAQueryFactory(em);
+    }
 
     public List<Message> getMessages() {
         return messages;
     }
 
     @Transactional
-    public List<Message> getMessageListBy(Integer topicID, Integer limit, String orderBy, String ordering, List<Topic> topics) {
+    public List<Message> getMessageListBy(Integer topicID, Integer limit, String orderBy, String ordering,
+                                          String sender, String text, LocalDateTime localDateTime, List<Topic> topics) {
         boolean isAdmin = false;
         Optional<?> grantedAuthority = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().findFirst();
         if (grantedAuthority.isPresent()) {
             isAdmin = grantedAuthority.get().toString().contains("ROLE_ADMIN");
         }
-        if (topicID == null) topicID = topics.get(0).getTopicID();
-        String ord = null;
-        String asc = "ASC";
-        if (orderBy == null) orderBy = "id";
         if (ordering == null) ordering = "ASC";
+        Order order = ordering.equals("DSC") ? Order.DESC : Order.ASC;
+
+        if (topicID == null) topicID = topics.get(0).getTopicID();
+
+        if (orderBy == null) orderBy = "id";
+
+        BooleanBuilder whereCondition = new BooleanBuilder();
+
+        whereCondition.and(QMessage.message.topic.topicID.eq(topicID));
+
+        if (!isAdmin) whereCondition.and(QMessage.message.deleted.isFalse());
+
+        if (sender != null) whereCondition.and(QMessage.message.from.like("%"+sender+"%"));
+
+        if (text != null) whereCondition.and(QMessage.message.text.like("%"+text+"%"));
+
+        if (localDateTime != null) whereCondition.and(QMessage.message.time.after(localDateTime));
+
         switch (orderBy) {
             case "from":
-                orderBy = "m.from";
+                orderBy = "from";
                 break;
             case "time":
-                orderBy = "m.time";
+                orderBy = "time";
                 break;
             default:
-                orderBy = "m.id";
+                orderBy = "id";
         }
-        if (ordering.equals("DSC")) ordering = "DESC";
+
+        queryFactory =  new JPAQueryFactory(em);
+        if (limit > 0) {
+            return queryFactory.selectFrom(QMessage.message)
+                    .where(whereCondition)
+                    .orderBy(getOrderBy(order,orderBy))
+                    .limit(limit)
+                    .fetch();
+        }else {
+            return queryFactory.selectFrom(QMessage.message)
+                    .where(whereCondition)
+                    .orderBy(getOrderBy(order,orderBy))
+                    .fetch();
+        }
+
+/*        if (ordering.equals("DSC")) ordering = "DESC";
         if (limit <= 0) limit = 15;
         if (isAdmin) {
             return em.createQuery("SELECT m FROM Message m WHERE m.topic.topicID = :tId ORDER BY " + orderBy + " " + ordering, Message.class)
@@ -67,41 +100,8 @@ public class MessageService {
                     .setParameter("tId", topicID)
                     .setMaxResults(limit)
                     .getResultList();
-        }
+        }*/
 
-
-        /*List<Message> list;
-        if (limit == -1) limit = messages.size();
-        if (ordering == null) ordering = Ordering.ASC;
-        if (orderBy != null) {
-            Comparator<Message> comp;
-            switch (orderBy) {
-                case "from":
-                    comp = (Message o1, Message o2) -> o1.getFrom().compareTo(o2.getFrom());
-                    break;
-                case "time":
-                    comp = Comparator.comparing(Message::getTime);
-                    break;
-                default:
-                    comp = Comparator.comparing(Message::getId);
-                    break;
-            }
-            if (ordering == Ordering.DSC) {
-                comp = comp.reversed();
-            }
-
-            list = messages.stream()
-                    .filter(message -> !message.isDeleted())
-                    .sorted(comp)
-                    .limit(limit)
-                    .collect(Collectors.toList());
-        } else {
-            list = messages.stream()
-                    .filter(message -> !message.isDeleted())
-                    .limit(limit)
-                    .collect(Collectors.toList());
-        }
-        return list;*/
     }
 
     @Transactional
@@ -145,6 +145,10 @@ public class MessageService {
     @Transactional
     public void deleteMessageOf(int id) {
         em.find(Message.class, id).setDeleted(true);
+    }
 
+    private OrderSpecifier<?> getOrderBy(Order order, String field){
+        Path<Object> fieldPath = Expressions.path(Object.class,QMessage.message,field);
+        return new OrderSpecifier(order,fieldPath);
     }
 }

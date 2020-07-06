@@ -1,8 +1,6 @@
 package edu.progmatic.messenger.model;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -26,7 +24,6 @@ public class AppUser implements UserDetails {
     @Column(name="Password")
     @NotNull
     private String password;
-
 
     @ManyToMany
     private Set<Authority> authorities = new HashSet<>();
