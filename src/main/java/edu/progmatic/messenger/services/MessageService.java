@@ -88,20 +88,6 @@ public class MessageService {
                     .fetch();
         }
 
-/*        if (ordering.equals("DSC")) ordering = "DESC";
-        if (limit <= 0) limit = 15;
-        if (isAdmin) {
-            return em.createQuery("SELECT m FROM Message m WHERE m.topic.topicID = :tId ORDER BY " + orderBy + " " + ordering, Message.class)
-                    .setParameter("tId", topicID)
-                    .setMaxResults(limit)
-                    .getResultList();
-        } else {
-            return em.createQuery("SELECT m FROM Message m WHERE m.topic.topicID = :tId AND m.deleted = false ORDER BY " + orderBy + " " + ordering, Message.class)
-                    .setParameter("tId", topicID)
-                    .setMaxResults(limit)
-                    .getResultList();
-        }*/
-
     }
 
     @Transactional

@@ -1,5 +1,7 @@
 package edu.progmatic.messenger.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -23,6 +25,7 @@ public class Topic {
     private String description;
 
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "topic", fetch = FetchType.LAZY)
+    @JsonIgnore  //TODO change to DTO
     private List<Message> messages;
 
     public Topic() {

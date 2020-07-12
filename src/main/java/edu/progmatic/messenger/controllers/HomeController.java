@@ -23,6 +23,7 @@ public class HomeController {
     public String homePage(Model model){
         Message lastMessage = messageService.getLastMessage();
         model.addAttribute("message",lastMessage);
+        model.addAttribute("username", UserController.getUsername());
         return "home";
     }
 }

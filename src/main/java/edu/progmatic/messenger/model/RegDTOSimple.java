@@ -8,9 +8,11 @@ public class RegDTOSimple {
     @NotNull
     @Size(min = 4, max = 20)
     private String username;
+
     @NotNull
     @Size(min = 8, max = 16)
     private String password;
+
     @NotNull
     @Size(min = 8, max = 16)
     private String passConf;
