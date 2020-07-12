@@ -31,7 +31,7 @@
             <ul class="navbar-nav justify-content-end">
                 <li class="nav-item">
                     <a class="nav-link active" data-sec-authorize="isAnonymous()" data-th-href="@{/login}" >Bejelentkezés</a>
-                    <a class="nav-item disabled" data-sec-authorize="isAuthenticated()" data-th-text="${#authentication.getPrincipal().getUsername()}"></a>
+                    <a class="nav-item disabled" data-sec-authorize="isAuthenticated()" data-th-text="${username}"></a>
                 </li>
                 <li class="nav-item" data-sec-authorize="isAuthenticated()">
                     <a class="nav-link active" data-th-href="@{/logout}">Kijelentkezés</a>
